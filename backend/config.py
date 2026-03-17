@@ -1,14 +1,16 @@
 import os
+print("DEBUG DATABASE_URL:", os.getenv("DATABASE_URL", "NOT FOUND"))
+
 from pydantic_settings import BaseSettings
 from databases import Database
 from sqlalchemy import create_engine, MetaData
 
 class Settings(BaseSettings):
-    database_url: str = os.getenv("DATABASE_URL", "")
-    secret_key: str = os.getenv("SECRET_KEY", "fallback-secret")
+    database_url: str
+    secret_key: str = "fallback"
     algorithm: str = "HS256"
     access_token_expire_minutes: int = 480
-    frontend_url: str = os.getenv("FRONTEND_URL", "*")
+    frontend_url: str = "*"
 
     class Config:
         env_file = ".env"
@@ -16,9 +18,8 @@ class Settings(BaseSettings):
 
 settings = Settings()
 
-# asyncpg requires postgresql+asyncpg://, sqlalchemy requires postgresql://
 asyncpg_url = settings.database_url.replace("postgresql://", "postgresql+asyncpg://", 1)
-sync_url = settings.database_url.replace("postgresql+asyncpg://", "postgresql://", 1)
+sync_url = asyncpg_url.replace("postgresql+asyncpg://", "postgresql://", 1)
 
 database = Database(asyncpg_url)
 metadata = MetaData()
