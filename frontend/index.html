@@ -952,6 +952,7 @@
           });
           if (q) params.set("q", q);
           const data = await api(`/api/customers/?${params}`);
+          if (!data) return; // ← thêm dòng này
           totalRecords = data.total;
           renderTable(data.items);
           document.getElementById("resultInfo").textContent =
