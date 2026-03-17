@@ -827,7 +827,7 @@
           localStorage.setItem("token", token);
           localStorage.setItem("role", currentRole);
           localStorage.setItem("username", currentUser);
-          showApp();
+          await showApp(); // ← thêm await ở đây
         } catch {
           document.getElementById("loginError").style.display = "block";
         }
