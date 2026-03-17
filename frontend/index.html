@@ -1,616 +1,1229 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Customer Database</title>
-<style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Customer Database</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
 
-:root {
-  --bg: #f4f4f2;
-  --white: #ffffff;
-  --border: #e2e2df;
-  --text: #1a1a18;
-  --muted: #888884;
-  --accent: #1a6b3c;
-  --accent-light: #e8f5ee;
-  --danger: #c0392b;
-  --danger-light: #fdf0ee;
-  --warning: #d97706;
-  --radius: 8px;
-}
+      :root {
+        --bg: #f4f4f2;
+        --white: #ffffff;
+        --border: #e2e2df;
+        --text: #1a1a18;
+        --muted: #888884;
+        --accent: #1a6b3c;
+        --accent-light: #e8f5ee;
+        --danger: #c0392b;
+        --danger-light: #fdf0ee;
+        --warning: #d97706;
+        --radius: 8px;
+      }
 
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; min-height: 100vh; }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        font-size: 14px;
+        min-height: 100vh;
+      }
 
-/* ── Login ── */
-#loginPage { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 16px; }
-.login-card { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 36px 32px; width: 100%; max-width: 360px; }
-.login-card h1 { font-size: 1.25rem; font-weight: 600; margin-bottom: 4px; }
-.login-card p { color: var(--muted); font-size: 0.8rem; margin-bottom: 24px; }
-.login-card label { display: block; font-size: 0.75rem; color: var(--muted); margin-bottom: 4px; }
-.login-card input { width: 100%; padding: 9px 12px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 0.9rem; outline: none; margin-bottom: 14px; background: var(--bg); }
-.login-card input:focus { border-color: var(--accent); }
-.login-error { color: var(--danger); font-size: 0.78rem; margin-bottom: 10px; display: none; }
+      /* ── Login ── */
+      #loginPage {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        padding: 16px;
+      }
+      .login-card {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 36px 32px;
+        width: 100%;
+        max-width: 360px;
+      }
+      .login-card h1 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 4px;
+      }
+      .login-card p {
+        color: var(--muted);
+        font-size: 0.8rem;
+        margin-bottom: 24px;
+      }
+      .login-card label {
+        display: block;
+        font-size: 0.75rem;
+        color: var(--muted);
+        margin-bottom: 4px;
+      }
+      .login-card input {
+        width: 100%;
+        padding: 9px 12px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        font-size: 0.9rem;
+        outline: none;
+        margin-bottom: 14px;
+        background: var(--bg);
+      }
+      .login-card input:focus {
+        border-color: var(--accent);
+      }
+      .login-error {
+        color: var(--danger);
+        font-size: 0.78rem;
+        margin-bottom: 10px;
+        display: none;
+      }
 
-/* ── Buttons ── */
-button { cursor: pointer; font-family: inherit; font-size: 0.85rem; border-radius: var(--radius); border: none; transition: opacity 0.15s; }
-button:hover { opacity: 0.85; }
-.btn-primary { background: var(--accent); color: #fff; padding: 9px 18px; font-weight: 500; }
-.btn-secondary { background: var(--white); color: var(--text); padding: 8px 16px; border: 1px solid var(--border); }
-.btn-danger { background: var(--danger); color: #fff; padding: 8px 16px; }
-.btn-sm { padding: 5px 12px; font-size: 0.78rem; }
+      /* ── Buttons ── */
+      button {
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 0.85rem;
+        border-radius: var(--radius);
+        border: none;
+        transition: opacity 0.15s;
+      }
+      button:hover {
+        opacity: 0.85;
+      }
+      .btn-primary {
+        background: var(--accent);
+        color: #fff;
+        padding: 9px 18px;
+        font-weight: 500;
+      }
+      .btn-secondary {
+        background: var(--white);
+        color: var(--text);
+        padding: 8px 16px;
+        border: 1px solid var(--border);
+      }
+      .btn-danger {
+        background: var(--danger);
+        color: #fff;
+        padding: 8px 16px;
+      }
+      .btn-sm {
+        padding: 5px 12px;
+        font-size: 0.78rem;
+      }
 
-/* ── App shell ── */
-#app { display: none; min-height: 100vh; }
-.topbar { background: var(--white); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; gap: 16px; height: 52px; }
-.topbar h1 { font-size: 1rem; font-weight: 600; flex: 1; }
-.topbar .user-info { font-size: 0.78rem; color: var(--muted); }
-.role-badge { display: inline-block; font-size: 0.65rem; padding: 2px 8px; border-radius: 20px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em; }
-.role-admin  { background: #fef3c7; color: #92400e; }
-.role-editor { background: #dbeafe; color: #1e40af; }
-.role-viewer { background: #f0fdf4; color: #166534; }
+      /* ── App shell ── */
+      #app {
+        display: none;
+        min-height: 100vh;
+      }
+      .topbar {
+        background: var(--white);
+        border-bottom: 1px solid var(--border);
+        padding: 0 24px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        height: 52px;
+      }
+      .topbar h1 {
+        font-size: 1rem;
+        font-weight: 600;
+        flex: 1;
+      }
+      .topbar .user-info {
+        font-size: 0.78rem;
+        color: var(--muted);
+      }
+      .role-badge {
+        display: inline-block;
+        font-size: 0.65rem;
+        padding: 2px 8px;
+        border-radius: 20px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .role-admin {
+        background: #fef3c7;
+        color: #92400e;
+      }
+      .role-editor {
+        background: #dbeafe;
+        color: #1e40af;
+      }
+      .role-viewer {
+        background: #f0fdf4;
+        color: #166534;
+      }
 
-/* ── Tabs ── */
-.tabs { background: var(--white); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; gap: 2px; }
-.tab { padding: 10px 16px; font-size: 0.82rem; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; background: none; border-radius: 0; }
-.tab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 500; }
-.tab:hover { color: var(--text); opacity: 1; }
-.tab[data-role="admin"] { display: none; }
+      /* ── Tabs ── */
+      .tabs {
+        background: var(--white);
+        border-bottom: 1px solid var(--border);
+        padding: 0 24px;
+        display: flex;
+        gap: 2px;
+      }
+      .tab {
+        padding: 10px 16px;
+        font-size: 0.82rem;
+        color: var(--muted);
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -1px;
+        background: none;
+        border-radius: 0;
+      }
+      .tab.active {
+        color: var(--accent);
+        border-bottom-color: var(--accent);
+        font-weight: 500;
+      }
+      .tab:hover {
+        color: var(--text);
+        opacity: 1;
+      }
+      .tab[data-role="admin"] {
+        display: none;
+      }
 
-/* ── Content ── */
-.content { padding: 24px; max-width: 1000px; margin: 0 auto; }
+      /* ── Content ── */
+      .content {
+        padding: 24px;
+        max-width: 1000px;
+        margin: 0 auto;
+      }
 
-/* ── Search bar ── */
-.search-row { display: flex; gap: 10px; margin-bottom: 16px; align-items: center; }
-.search-row input { flex: 1; padding: 9px 14px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 0.9rem; outline: none; background: var(--white); }
-.search-row input:focus { border-color: var(--accent); }
-.result-info { font-size: 0.75rem; color: var(--muted); margin-bottom: 10px; }
+      /* ── Search bar ── */
+      .search-row {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 16px;
+        align-items: center;
+      }
+      .search-row input {
+        flex: 1;
+        padding: 9px 14px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        font-size: 0.9rem;
+        outline: none;
+        background: var(--white);
+      }
+      .search-row input:focus {
+        border-color: var(--accent);
+      }
+      .result-info {
+        font-size: 0.75rem;
+        color: var(--muted);
+        margin-bottom: 10px;
+      }
 
-/* ── Table ── */
-.table-wrap { background: var(--white); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
-table { width: 100%; border-collapse: collapse; }
-th { background: var(--bg); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); font-weight: 500; }
-td { padding: 10px 14px; border-bottom: 1px solid #f0f0ec; font-size: 0.85rem; vertical-align: middle; }
-tr:last-child td { border-bottom: none; }
-tr:hover td { background: #fafaf8; }
-.td-id { font-family: monospace; font-size: 0.75rem; color: var(--muted); }
-.td-actions { display: flex; gap: 6px; }
-.empty-state { padding: 40px; text-align: center; color: var(--muted); }
+      /* ── Table ── */
+      .table-wrap {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th {
+        background: var(--bg);
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--muted);
+        padding: 10px 14px;
+        text-align: left;
+        border-bottom: 1px solid var(--border);
+        font-weight: 500;
+      }
+      td {
+        padding: 10px 14px;
+        border-bottom: 1px solid #f0f0ec;
+        font-size: 0.85rem;
+        vertical-align: middle;
+      }
+      tr:last-child td {
+        border-bottom: none;
+      }
+      tr:hover td {
+        background: #fafaf8;
+      }
+      .td-id {
+        font-family: monospace;
+        font-size: 0.75rem;
+        color: var(--muted);
+      }
+      .td-actions {
+        display: flex;
+        gap: 6px;
+      }
+      .empty-state {
+        padding: 40px;
+        text-align: center;
+        color: var(--muted);
+      }
 
-/* ── Pagination ── */
-.pagination { display: flex; align-items: center; gap: 10px; margin-top: 14px; font-size: 0.8rem; color: var(--muted); }
-.pagination button { padding: 5px 12px; }
+      /* ── Pagination ── */
+      .pagination {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 14px;
+        font-size: 0.8rem;
+        color: var(--muted);
+      }
+      .pagination button {
+        padding: 5px 12px;
+      }
 
-/* ── Modal ── */
-.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.35); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 16px; display: none; }
-.modal-overlay.open { display: flex; }
-.modal { background: var(--white); border-radius: 12px; padding: 24px; width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; }
-.modal h2 { font-size: 1rem; font-weight: 600; margin-bottom: 20px; }
-.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.form-field { display: flex; flex-direction: column; gap: 4px; }
-.form-field.full { grid-column: 1 / -1; }
-.form-field label { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
-.form-field input, .form-field select { padding: 8px 10px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 0.88rem; outline: none; font-family: inherit; background: var(--bg); }
-.form-field input:focus, .form-field select:focus { border-color: var(--accent); }
-.modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+      /* ── Modal ── */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.35);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 100;
+        padding: 16px;
+        display: none;
+      }
+      .modal-overlay.open {
+        display: flex;
+      }
+      .modal {
+        background: var(--white);
+        border-radius: 12px;
+        padding: 24px;
+        width: 100%;
+        max-width: 560px;
+        max-height: 90vh;
+        overflow-y: auto;
+      }
+      .modal h2 {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+      }
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+      .form-field {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .form-field.full {
+        grid-column: 1 / -1;
+      }
+      .form-field label {
+        font-size: 0.72rem;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .form-field input,
+      .form-field select {
+        padding: 8px 10px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        font-size: 0.88rem;
+        outline: none;
+        font-family: inherit;
+        background: var(--bg);
+      }
+      .form-field input:focus,
+      .form-field select:focus {
+        border-color: var(--accent);
+      }
+      .modal-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        margin-top: 20px;
+      }
 
-/* ── History ── */
-.history-list { display: flex; flex-direction: column; gap: 8px; }
-.history-item { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 16px; }
-.history-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; flex-wrap: wrap; }
-.history-action { font-size: 0.7rem; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
-.action-CREATE  { background: var(--accent-light); color: var(--accent); }
-.action-UPDATE  { background: #dbeafe; color: #1e40af; }
-.action-DELETE  { background: var(--danger-light); color: var(--danger); }
-.history-who { font-size: 0.78rem; color: var(--muted); }
-.history-when { font-size: 0.75rem; color: var(--muted); margin-left: auto; }
-.history-diff { font-size: 0.78rem; color: var(--muted); }
-.history-diff span { color: var(--text); }
+      /* ── History ── */
+      .history-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .history-item {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 12px 16px;
+      }
+      .history-meta {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 6px;
+        flex-wrap: wrap;
+      }
+      .history-action {
+        font-size: 0.7rem;
+        font-weight: 600;
+        padding: 2px 8px;
+        border-radius: 4px;
+      }
+      .action-CREATE {
+        background: var(--accent-light);
+        color: var(--accent);
+      }
+      .action-UPDATE {
+        background: #dbeafe;
+        color: #1e40af;
+      }
+      .action-DELETE {
+        background: var(--danger-light);
+        color: var(--danger);
+      }
+      .history-who {
+        font-size: 0.78rem;
+        color: var(--muted);
+      }
+      .history-when {
+        font-size: 0.75rem;
+        color: var(--muted);
+        margin-left: auto;
+      }
+      .history-diff {
+        font-size: 0.78rem;
+        color: var(--muted);
+      }
+      .history-diff span {
+        color: var(--text);
+      }
 
-/* ── Import ── */
-.import-zone { border: 2px dashed var(--border); border-radius: 10px; padding: 40px; text-align: center; color: var(--muted); background: var(--white); margin-bottom: 16px; transition: border-color 0.2s; }
-.import-zone.drag { border-color: var(--accent); background: var(--accent-light); }
-.import-zone input { display: none; }
-.import-result { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; }
-.stat-row { display: flex; gap: 20px; margin-bottom: 10px; }
-.stat { text-align: center; }
-.stat-num { font-size: 1.4rem; font-weight: 600; }
-.stat-label { font-size: 0.72rem; color: var(--muted); }
-.ok { color: var(--accent); }
-.err { color: var(--danger); }
+      /* ── Import ── */
+      .import-zone {
+        border: 2px dashed var(--border);
+        border-radius: 10px;
+        padding: 40px;
+        text-align: center;
+        color: var(--muted);
+        background: var(--white);
+        margin-bottom: 16px;
+        transition: border-color 0.2s;
+      }
+      .import-zone.drag {
+        border-color: var(--accent);
+        background: var(--accent-light);
+      }
+      .import-zone input {
+        display: none;
+      }
+      .import-result {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 16px;
+        margin-bottom: 12px;
+      }
+      .stat-row {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 10px;
+      }
+      .stat {
+        text-align: center;
+      }
+      .stat-num {
+        font-size: 1.4rem;
+        font-weight: 600;
+      }
+      .stat-label {
+        font-size: 0.72rem;
+        color: var(--muted);
+      }
+      .ok {
+        color: var(--accent);
+      }
+      .err {
+        color: var(--danger);
+      }
 
-/* ── Users tab ── */
-.user-table th, .user-table td { padding: 9px 14px; }
+      /* ── Users tab ── */
+      .user-table th,
+      .user-table td {
+        padding: 9px 14px;
+      }
 
-/* ── Toast ── */
-.toast { position: fixed; bottom: 24px; right: 24px; background: #1a1a18; color: #fff; padding: 10px 18px; border-radius: 8px; font-size: 0.82rem; z-index: 200; opacity: 0; transition: opacity 0.25s; pointer-events: none; }
-.toast.show { opacity: 1; }
+      /* ── Toast ── */
+      .toast {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        background: #1a1a18;
+        color: #fff;
+        padding: 10px 18px;
+        border-radius: 8px;
+        font-size: 0.82rem;
+        z-index: 200;
+        opacity: 0;
+        transition: opacity 0.25s;
+        pointer-events: none;
+      }
+      .toast.show {
+        opacity: 1;
+      }
 
-@media (max-width: 600px) {
-  .form-grid { grid-template-columns: 1fr; }
-  .form-field.full { grid-column: 1; }
-  .content { padding: 16px; }
-  .topbar { padding: 0 16px; }
-  .tabs { padding: 0 16px; overflow-x: auto; }
-}
-</style>
-</head>
-<body>
-
-<!-- Login -->
-<div id="loginPage">
-  <div class="login-card">
-    <h1>Customer Database</h1>
-    <p>Sign in to continue</p>
-    <label>Username</label>
-    <input type="text" id="loginUser" placeholder="admin" />
-    <label>Password</label>
-    <input type="password" id="loginPass" placeholder="••••••••" />
-    <div class="login-error" id="loginError">Invalid username or password.</div>
-    <button class="btn-primary" style="width:100%" onclick="doLogin()">Sign in</button>
-  </div>
-</div>
-
-<!-- App -->
-<div id="app">
-  <div class="topbar">
-    <h1>Customer Database</h1>
-    <span class="user-info" id="userInfo"></span>
-    <button class="btn-secondary btn-sm" onclick="logout()">Sign out</button>
-  </div>
-  <div class="tabs" id="tabs">
-    <button class="tab active" onclick="showTab('search',this)">Search</button>
-    <button class="tab" onclick="showTab('import',this)">Import Excel</button>
-    <button class="tab" data-role="admin" onclick="showTab('users',this)">Users</button>
-  </div>
-
-  <!-- Search tab -->
-  <div class="content" id="tab-search">
-    <div class="search-row">
-      <input type="text" id="searchInput" placeholder="Search name, ID, phone, tax code..." oninput="debounceSearch()" />
-      <button class="btn-primary" id="addBtn" onclick="openAddModal()" style="display:none">+ Add Customer</button>
-    </div>
-    <div class="result-info" id="resultInfo"></div>
-    <div class="table-wrap">
-      <table>
-        <thead><tr>
-          <th>ID</th><th>Short Name</th><th>Name (EN)</th><th>Nationality</th><th>Phone</th><th>Actions</th>
-        </tr></thead>
-        <tbody id="tableBody"></tbody>
-      </table>
-    </div>
-    <div class="pagination">
-      <button class="btn-secondary btn-sm" onclick="changePage(-1)" id="prevBtn">← Prev</button>
-      <span id="pageInfo"></span>
-      <button class="btn-secondary btn-sm" onclick="changePage(1)" id="nextBtn">Next →</button>
-    </div>
-  </div>
-
-  <!-- Import tab -->
-  <div class="content" id="tab-import" style="display:none">
-    <h2 style="margin-bottom:16px;font-size:1rem">Import from Excel</h2>
-    <div class="import-zone" id="dropZone" onclick="document.getElementById('fileInput').click()"
-      ondragover="event.preventDefault();this.classList.add('drag')"
-      ondragleave="this.classList.remove('drag')"
-      ondrop="handleDrop(event)">
-      <input type="file" id="fileInput" accept=".xlsx,.xls" onchange="handleFile(this.files[0])" />
-      <p style="font-size:1rem;margin-bottom:6px">Click or drag .xlsx file here</p>
-      <p style="font-size:0.78rem">Columns: CustomerID, ShortName, CustomerNameEN, CustomerNameVN, etc.</p>
-    </div>
-    <div id="importResult" style="display:none"></div>
-    <h3 style="font-size:0.88rem;font-weight:600;margin-bottom:10px">Import History</h3>
-    <div class="table-wrap">
-      <table><thead><tr><th>File</th><th>By</th><th>Total</th><th>Success</th><th>Errors</th><th>Date</th></tr></thead>
-      <tbody id="importLogs"></tbody></table>
-    </div>
-  </div>
-
-  <!-- Users tab -->
-  <div class="content" id="tab-users" style="display:none">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-      <h2 style="font-size:1rem">User Management</h2>
-      <button class="btn-primary" onclick="openUserModal()">+ Add User</button>
-    </div>
-    <div class="table-wrap">
-      <table class="user-table">
-        <thead><tr><th>Username</th><th>Full Name</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead>
-        <tbody id="usersBody"></tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<!-- Customer Modal -->
-<div class="modal-overlay" id="customerModal">
-  <div class="modal">
-    <h2 id="modalTitle">Add Customer</h2>
-    <div class="form-grid">
-      <div class="form-field"><label>Customer ID *</label><input id="f_cid" /></div>
-      <div class="form-field"><label>Short Name</label><input id="f_short" /></div>
-      <div class="form-field"><label>Key Code</label><input id="f_key" /></div>
-      <div class="form-field"><label>Tax Code</label><input id="f_tax" /></div>
-      <div class="form-field full"><label>Name (English)</label><input id="f_nameEN" /></div>
-      <div class="form-field full"><label>Name (Vietnamese)</label><input id="f_nameVN" /></div>
-      <div class="form-field"><label>Customer Type</label><select id="f_ctype"><option value="">—</option></select></div>
-      <div class="form-field"><label>Enterprise Type</label><select id="f_etype"><option value="">—</option></select></div>
-      <div class="form-field"><label>Industry</label><select id="f_ind"><option value="">—</option></select></div>
-      <div class="form-field"><label>Nationality</label><select id="f_nat"><option value="">—</option></select></div>
-      <div class="form-field"><label>Phone</label><input id="f_phone" /></div>
-      <div class="form-field"><label>Email</label><input id="f_email" /></div>
-      <div class="form-field full"><label>Status</label><input id="f_status" /></div>
-    </div>
-    <div class="modal-actions">
-      <button class="btn-secondary" onclick="closeModal('customerModal')">Cancel</button>
-      <button class="btn-primary" onclick="saveCustomer()">Save</button>
-    </div>
-  </div>
-</div>
-
-<!-- Detail / History Modal -->
-<div class="modal-overlay" id="historyModal">
-  <div class="modal" style="max-width:680px">
-    <h2 id="historyTitle">History</h2>
-    <div id="historyBody" class="history-list"></div>
-    <div class="modal-actions">
-      <button class="btn-secondary" onclick="closeModal('historyModal')">Close</button>
-    </div>
-  </div>
-</div>
-
-<!-- Add User Modal -->
-<div class="modal-overlay" id="userModal">
-  <div class="modal" style="max-width:400px">
-    <h2>Add User</h2>
-    <div class="form-grid">
-      <div class="form-field full"><label>Username</label><input id="u_username" /></div>
-      <div class="form-field full"><label>Full Name</label><input id="u_fullname" /></div>
-      <div class="form-field full"><label>Password</label><input type="password" id="u_password" /></div>
-      <div class="form-field full"><label>Role</label>
-        <select id="u_role">
-          <option value="viewer">Viewer — search only</option>
-          <option value="editor">Editor — add/edit</option>
-          <option value="admin">Admin — full access</option>
-        </select>
+      @media (max-width: 600px) {
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+        .form-field.full {
+          grid-column: 1;
+        }
+        .content {
+          padding: 16px;
+        }
+        .topbar {
+          padding: 0 16px;
+        }
+        .tabs {
+          padding: 0 16px;
+          overflow-x: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Login -->
+    <div id="loginPage">
+      <div class="login-card">
+        <h1>Customer Database</h1>
+        <p>Sign in to continue</p>
+        <label>Username</label>
+        <input type="text" id="loginUser" placeholder="admin" />
+        <label>Password</label>
+        <input type="password" id="loginPass" placeholder="••••••••" />
+        <div class="login-error" id="loginError">
+          Invalid username or password.
+        </div>
+        <button class="btn-primary" style="width: 100%" onclick="doLogin()">
+          Sign in
+        </button>
       </div>
     </div>
-    <div class="modal-actions">
-      <button class="btn-secondary" onclick="closeModal('userModal')">Cancel</button>
-      <button class="btn-primary" onclick="saveUser()">Create</button>
+
+    <!-- App -->
+    <div id="app">
+      <div class="topbar">
+        <h1>Customer Database</h1>
+        <span class="user-info" id="userInfo"></span>
+        <button class="btn-secondary btn-sm" onclick="logout()">
+          Sign out
+        </button>
+      </div>
+      <div class="tabs" id="tabs">
+        <button class="tab active" onclick="showTab('search', this)">
+          Search
+        </button>
+        <button class="tab" onclick="showTab('import', this)">
+          Import Excel
+        </button>
+        <button class="tab" data-role="admin" onclick="showTab('users', this)">
+          Users
+        </button>
+      </div>
+
+      <!-- Search tab -->
+      <div class="content" id="tab-search">
+        <div class="search-row">
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Search name, ID, phone, tax code..."
+            oninput="debounceSearch()"
+          />
+          <button
+            class="btn-primary"
+            id="addBtn"
+            onclick="openAddModal()"
+            style="display: none"
+          >
+            + Add Customer
+          </button>
+        </div>
+        <div class="result-info" id="resultInfo"></div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Short Name</th>
+                <th>Name (EN)</th>
+                <th>Nationality</th>
+                <th>Phone</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+        <div class="pagination">
+          <button
+            class="btn-secondary btn-sm"
+            onclick="changePage(-1)"
+            id="prevBtn"
+          >
+            ← Prev
+          </button>
+          <span id="pageInfo"></span>
+          <button
+            class="btn-secondary btn-sm"
+            onclick="changePage(1)"
+            id="nextBtn"
+          >
+            Next →
+          </button>
+        </div>
+      </div>
+
+      <!-- Import tab -->
+      <div class="content" id="tab-import" style="display: none">
+        <h2 style="margin-bottom: 16px; font-size: 1rem">Import from Excel</h2>
+        <div
+          class="import-zone"
+          id="dropZone"
+          onclick="document.getElementById('fileInput').click()"
+          ondragover="
+            event.preventDefault();
+            this.classList.add('drag');
+          "
+          ondragleave="this.classList.remove('drag')"
+          ondrop="handleDrop(event)"
+        >
+          <input
+            type="file"
+            id="fileInput"
+            accept=".xlsx,.xls"
+            onchange="handleFile(this.files[0])"
+          />
+          <p style="font-size: 1rem; margin-bottom: 6px">
+            Click or drag .xlsx file here
+          </p>
+          <p style="font-size: 0.78rem">
+            Columns: CustomerID, ShortName, CustomerNameEN, CustomerNameVN, etc.
+          </p>
+        </div>
+        <div id="importResult" style="display: none"></div>
+        <h3 style="font-size: 0.88rem; font-weight: 600; margin-bottom: 10px">
+          Import History
+        </h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>File</th>
+                <th>By</th>
+                <th>Total</th>
+                <th>Success</th>
+                <th>Errors</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody id="importLogs"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Users tab -->
+      <div class="content" id="tab-users" style="display: none">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+          "
+        >
+          <h2 style="font-size: 1rem">User Management</h2>
+          <button class="btn-primary" onclick="openUserModal()">
+            + Add User
+          </button>
+        </div>
+        <div class="table-wrap">
+          <table class="user-table">
+            <thead>
+              <tr>
+                <th>Username</th>
+                <th>Full Name</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="usersBody"></tbody>
+          </table>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
 
-<div class="toast" id="toast"></div>
+    <!-- Customer Modal -->
+    <div class="modal-overlay" id="customerModal">
+      <div class="modal">
+        <h2 id="modalTitle">Add Customer</h2>
+        <div class="form-grid">
+          <div class="form-field">
+            <label>Customer ID *</label><input id="f_cid" />
+          </div>
+          <div class="form-field">
+            <label>Short Name</label><input id="f_short" />
+          </div>
+          <div class="form-field">
+            <label>Key Code</label><input id="f_key" />
+          </div>
+          <div class="form-field">
+            <label>Tax Code</label><input id="f_tax" />
+          </div>
+          <div class="form-field full">
+            <label>Name (English)</label><input id="f_nameEN" />
+          </div>
+          <div class="form-field full">
+            <label>Name (Vietnamese)</label><input id="f_nameVN" />
+          </div>
+          <div class="form-field">
+            <label>Customer Type</label
+            ><select id="f_ctype">
+              <option value="">—</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label>Enterprise Type</label
+            ><select id="f_etype">
+              <option value="">—</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label>Industry</label
+            ><select id="f_ind">
+              <option value="">—</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label>Nationality</label
+            ><select id="f_nat">
+              <option value="">—</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label>Phone</label><input id="f_phone" />
+          </div>
+          <div class="form-field">
+            <label>Email</label><input id="f_email" />
+          </div>
+          <div class="form-field full">
+            <label>Status</label><input id="f_status" />
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn-secondary" onclick="closeModal('customerModal')">
+            Cancel
+          </button>
+          <button class="btn-primary" onclick="saveCustomer()">Save</button>
+        </div>
+      </div>
+    </div>
 
-<script>
-// ── Config ─────────────────────────────────────────────────
-const API = 'https://YOUR-APP.railway.app'; // ← change this after deploy
+    <!-- Detail / History Modal -->
+    <div class="modal-overlay" id="historyModal">
+      <div class="modal" style="max-width: 680px">
+        <h2 id="historyTitle">History</h2>
+        <div id="historyBody" class="history-list"></div>
+        <div class="modal-actions">
+          <button class="btn-secondary" onclick="closeModal('historyModal')">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
 
-// ── State ──────────────────────────────────────────────────
-let token = localStorage.getItem('token');
-let currentRole = localStorage.getItem('role');
-let currentUser = localStorage.getItem('username');
-let page = 0;
-const PAGE_SIZE = 50;
-let totalRecords = 0;
-let currentQuery = '';
-let editingCustomerId = null;
-let lookups = {};
+    <!-- Add User Modal -->
+    <div class="modal-overlay" id="userModal">
+      <div class="modal" style="max-width: 400px">
+        <h2>Add User</h2>
+        <div class="form-grid">
+          <div class="form-field full">
+            <label>Username</label><input id="u_username" />
+          </div>
+          <div class="form-field full">
+            <label>Full Name</label><input id="u_fullname" />
+          </div>
+          <div class="form-field full">
+            <label>Password</label><input type="password" id="u_password" />
+          </div>
+          <div class="form-field full">
+            <label>Role</label>
+            <select id="u_role">
+              <option value="viewer">Viewer — search only</option>
+              <option value="editor">Editor — add/edit</option>
+              <option value="admin">Admin — full access</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn-secondary" onclick="closeModal('userModal')">
+            Cancel
+          </button>
+          <button class="btn-primary" onclick="saveUser()">Create</button>
+        </div>
+      </div>
+    </div>
 
-// ── Init ───────────────────────────────────────────────────
-if (token) showApp();
+    <div class="toast" id="toast"></div>
 
-async function doLogin() {
-  const user = document.getElementById('loginUser').value.trim();
-  const pass = document.getElementById('loginPass').value;
-  document.getElementById('loginError').style.display = 'none';
-  try {
-    const res = await fetch(`${API}/api/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: `username=${encodeURIComponent(user)}&password=${encodeURIComponent(pass)}`
-    });
-    if (!res.ok) throw new Error();
-    const data = await res.json();
-    token = data.access_token;
-    currentRole = data.role;
-    currentUser = user;
-    localStorage.setItem('token', token);
-    localStorage.setItem('role', currentRole);
-    localStorage.setItem('username', currentUser);
-    showApp();
-  } catch {
-    document.getElementById('loginError').style.display = 'block';
-  }
-}
+    <script>
+      // ── Config ─────────────────────────────────────────────────
+      const API = "https://voyager-crm-production.up.railway.app";
 
-document.getElementById('loginPass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+      // ── State ──────────────────────────────────────────────────
+      let token = localStorage.getItem("token");
+      let currentRole = localStorage.getItem("role");
+      let currentUser = localStorage.getItem("username");
+      let page = 0;
+      const PAGE_SIZE = 50;
+      let totalRecords = 0;
+      let currentQuery = "";
+      let editingCustomerId = null;
+      let lookups = {};
 
-function logout() {
-  localStorage.clear();
-  token = null;
-  document.getElementById('app').style.display = 'none';
-  document.getElementById('loginPage').style.display = 'flex';
-}
+      // ── Init ───────────────────────────────────────────────────
+      if (token) showApp();
 
-async function showApp() {
-  document.getElementById('loginPage').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
-  document.getElementById('userInfo').innerHTML =
-    `${currentUser} <span class="role-badge role-${currentRole}">${currentRole}</span>`;
+      async function doLogin() {
+        const user = document.getElementById("loginUser").value.trim();
+        const pass = document.getElementById("loginPass").value;
+        document.getElementById("loginError").style.display = "none";
+        try {
+          const res = await fetch(`${API}/api/auth/login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: `username=${encodeURIComponent(user)}&password=${encodeURIComponent(pass)}`,
+          });
+          if (!res.ok) throw new Error();
+          const data = await res.json();
+          token = data.access_token;
+          currentRole = data.role;
+          currentUser = user;
+          localStorage.setItem("token", token);
+          localStorage.setItem("role", currentRole);
+          localStorage.setItem("username", currentUser);
+          showApp();
+        } catch {
+          document.getElementById("loginError").style.display = "block";
+        }
+      }
 
-  // Show role-restricted tabs/buttons
-  if (currentRole === 'admin') {
-    document.querySelectorAll('[data-role="admin"]').forEach(el => el.style.display = 'inline-flex');
-  }
-  if (currentRole !== 'viewer') {
-    document.getElementById('addBtn').style.display = 'inline-block';
-  }
-
-  await loadLookups();
-  await searchCustomers();
-  await loadImportLogs();
-  if (currentRole === 'admin') await loadUsers();
-}
-
-// ── API helper ─────────────────────────────────────────────
-async function api(path, options = {}) {
-  const res = await fetch(`${API}${path}`, {
-    ...options,
-    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json', ...(options.headers || {}) }
-  });
-  if (res.status === 401) { logout(); return; }
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.detail || 'Request failed');
-  }
-  return res.json();
-}
-
-// ── Tabs ───────────────────────────────────────────────────
-function showTab(name, btn) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  btn.classList.add('active');
-  ['search','import','users'].forEach(t => {
-    document.getElementById(`tab-${t}`).style.display = t === name ? 'block' : 'none';
-  });
-}
-
-// ── Lookups ────────────────────────────────────────────────
-async function loadLookups() {
-  try {
-    lookups = await api('/api/customers/meta/lookups');
-    ['customer_types','enterprise_types','industries','nationalities'].forEach(key => {
-      const fieldMap = { customer_types:'f_ctype', enterprise_types:'f_etype', industries:'f_ind', nationalities:'f_nat' };
-      const sel = document.getElementById(fieldMap[key]);
-      if (!sel) return;
-      lookups[key].forEach(item => {
-        const opt = document.createElement('option');
-        opt.value = item.id; opt.textContent = item.name;
-        sel.appendChild(opt);
+      document.getElementById("loginPass").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") doLogin();
       });
-    });
-  } catch {}
-}
 
-function lookupName(arr, id) {
-  if (!arr || !id) return '—';
-  return (arr.find(x => x.id === id) || {}).name || '—';
-}
+      function logout() {
+        localStorage.clear();
+        token = null;
+        document.getElementById("app").style.display = "none";
+        document.getElementById("loginPage").style.display = "flex";
+      }
 
-// ── Search ─────────────────────────────────────────────────
-let searchTimer;
-function debounceSearch() { clearTimeout(searchTimer); searchTimer = setTimeout(() => { page = 0; searchCustomers(); }, 300); }
+      async function showApp() {
+        document.getElementById("loginPage").style.display = "none";
+        document.getElementById("app").style.display = "block";
+        document.getElementById("userInfo").innerHTML =
+          `${currentUser} <span class="role-badge role-${currentRole}">${currentRole}</span>`;
 
-async function searchCustomers() {
-  const q = document.getElementById('searchInput').value.trim();
-  currentQuery = q;
-  try {
-    const params = new URLSearchParams({ limit: PAGE_SIZE, offset: page * PAGE_SIZE });
-    if (q) params.set('q', q);
-    const data = await api(`/api/customers/?${params}`);
-    totalRecords = data.total;
-    renderTable(data.items);
-    document.getElementById('resultInfo').textContent = `${data.total.toLocaleString()} record${data.total !== 1 ? 's' : ''}`;
-    document.getElementById('pageInfo').textContent = `Page ${page + 1} of ${Math.max(1, Math.ceil(totalRecords / PAGE_SIZE))}`;
-    document.getElementById('prevBtn').disabled = page === 0;
-    document.getElementById('nextBtn').disabled = (page + 1) * PAGE_SIZE >= totalRecords;
-  } catch (e) { toast(e.message, true); }
-}
+        // Show role-restricted tabs/buttons
+        if (currentRole === "admin") {
+          document
+            .querySelectorAll('[data-role="admin"]')
+            .forEach((el) => (el.style.display = "inline-flex"));
+        }
+        if (currentRole !== "viewer") {
+          document.getElementById("addBtn").style.display = "inline-block";
+        }
 
-function renderTable(items) {
-  const canEdit = currentRole !== 'viewer';
-  const canDelete = currentRole === 'admin';
-  document.getElementById('tableBody').innerHTML = items.length === 0
-    ? `<tr><td colspan="6" class="empty-state">No records found</td></tr>`
-    : items.map(c => `
+        await loadLookups();
+        await searchCustomers();
+        await loadImportLogs();
+        if (currentRole === "admin") await loadUsers();
+      }
+
+      // ── API helper ─────────────────────────────────────────────
+      async function api(path, options = {}) {
+        const res = await fetch(`${API}${path}`, {
+          ...options,
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+            ...(options.headers || {}),
+          },
+        });
+        if (res.status === 401) {
+          logout();
+          return;
+        }
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.detail || "Request failed");
+        }
+        return res.json();
+      }
+
+      // ── Tabs ───────────────────────────────────────────────────
+      function showTab(name, btn) {
+        document
+          .querySelectorAll(".tab")
+          .forEach((t) => t.classList.remove("active"));
+        btn.classList.add("active");
+        ["search", "import", "users"].forEach((t) => {
+          document.getElementById(`tab-${t}`).style.display =
+            t === name ? "block" : "none";
+        });
+      }
+
+      // ── Lookups ────────────────────────────────────────────────
+      async function loadLookups() {
+        try {
+          lookups = await api("/api/customers/meta/lookups");
+          [
+            "customer_types",
+            "enterprise_types",
+            "industries",
+            "nationalities",
+          ].forEach((key) => {
+            const fieldMap = {
+              customer_types: "f_ctype",
+              enterprise_types: "f_etype",
+              industries: "f_ind",
+              nationalities: "f_nat",
+            };
+            const sel = document.getElementById(fieldMap[key]);
+            if (!sel) return;
+            lookups[key].forEach((item) => {
+              const opt = document.createElement("option");
+              opt.value = item.id;
+              opt.textContent = item.name;
+              sel.appendChild(opt);
+            });
+          });
+        } catch {}
+      }
+
+      function lookupName(arr, id) {
+        if (!arr || !id) return "—";
+        return (arr.find((x) => x.id === id) || {}).name || "—";
+      }
+
+      // ── Search ─────────────────────────────────────────────────
+      let searchTimer;
+      function debounceSearch() {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(() => {
+          page = 0;
+          searchCustomers();
+        }, 300);
+      }
+
+      async function searchCustomers() {
+        const q = document.getElementById("searchInput").value.trim();
+        currentQuery = q;
+        try {
+          const params = new URLSearchParams({
+            limit: PAGE_SIZE,
+            offset: page * PAGE_SIZE,
+          });
+          if (q) params.set("q", q);
+          const data = await api(`/api/customers/?${params}`);
+          totalRecords = data.total;
+          renderTable(data.items);
+          document.getElementById("resultInfo").textContent =
+            `${data.total.toLocaleString()} record${data.total !== 1 ? "s" : ""}`;
+          document.getElementById("pageInfo").textContent =
+            `Page ${page + 1} of ${Math.max(1, Math.ceil(totalRecords / PAGE_SIZE))}`;
+          document.getElementById("prevBtn").disabled = page === 0;
+          document.getElementById("nextBtn").disabled =
+            (page + 1) * PAGE_SIZE >= totalRecords;
+        } catch (e) {
+          toast(e.message, true);
+        }
+      }
+
+      function renderTable(items) {
+        const canEdit = currentRole !== "viewer";
+        const canDelete = currentRole === "admin";
+        document.getElementById("tableBody").innerHTML =
+          items.length === 0
+            ? `<tr><td colspan="6" class="empty-state">No records found</td></tr>`
+            : items
+                .map(
+                  (c) => `
       <tr>
         <td class="td-id">${c.customer_id}</td>
-        <td>${c.short_name || '—'}</td>
-        <td>${c.name_en || c.name_vn || '—'}</td>
-        <td>${c.nationality || '—'}</td>
-        <td>${c.phone || '—'}</td>
+        <td>${c.short_name || "—"}</td>
+        <td>${c.name_en || c.name_vn || "—"}</td>
+        <td>${c.nationality || "—"}</td>
+        <td>${c.phone || "—"}</td>
         <td><div class="td-actions">
           <button class="btn-secondary btn-sm" onclick="viewHistory('${c.customer_id}')">History</button>
-          ${canEdit ? `<button class="btn-secondary btn-sm" onclick="openEditModal(${JSON.stringify(c).replace(/"/g,'&quot;')})">Edit</button>` : ''}
-          ${canDelete ? `<button class="btn-danger btn-sm" onclick="deleteCustomer('${c.customer_id}')">Del</button>` : ''}
+          ${canEdit ? `<button class="btn-secondary btn-sm" onclick="openEditModal(${JSON.stringify(c).replace(/"/g, "&quot;")})">Edit</button>` : ""}
+          ${canDelete ? `<button class="btn-danger btn-sm" onclick="deleteCustomer('${c.customer_id}')">Del</button>` : ""}
         </div></td>
-      </tr>`).join('');
-}
+      </tr>`,
+                )
+                .join("");
+      }
 
-function changePage(dir) { page = Math.max(0, page + dir); searchCustomers(); }
+      function changePage(dir) {
+        page = Math.max(0, page + dir);
+        searchCustomers();
+      }
 
-// ── Customer CRUD ──────────────────────────────────────────
-function openAddModal() {
-  editingCustomerId = null;
-  document.getElementById('modalTitle').textContent = 'Add Customer';
-  ['cid','short','key','tax','nameEN','nameVN','phone','email','status'].forEach(f => document.getElementById(`f_${f}`).value = '');
-  ['ctype','etype','ind','nat'].forEach(f => document.getElementById(`f_${f}`).value = '');
-  document.getElementById('customerModal').classList.add('open');
-}
+      // ── Customer CRUD ──────────────────────────────────────────
+      function openAddModal() {
+        editingCustomerId = null;
+        document.getElementById("modalTitle").textContent = "Add Customer";
+        [
+          "cid",
+          "short",
+          "key",
+          "tax",
+          "nameEN",
+          "nameVN",
+          "phone",
+          "email",
+          "status",
+        ].forEach((f) => (document.getElementById(`f_${f}`).value = ""));
+        ["ctype", "etype", "ind", "nat"].forEach(
+          (f) => (document.getElementById(`f_${f}`).value = ""),
+        );
+        document.getElementById("customerModal").classList.add("open");
+      }
 
-function openEditModal(c) {
-  editingCustomerId = c.customer_id;
-  document.getElementById('modalTitle').textContent = 'Edit Customer';
-  document.getElementById('f_cid').value = c.customer_id || '';
-  document.getElementById('f_cid').disabled = true;
-  document.getElementById('f_short').value = c.short_name || '';
-  document.getElementById('f_key').value = c.cust_key_code || '';
-  document.getElementById('f_tax').value = c.tax_code || '';
-  document.getElementById('f_nameEN').value = c.name_en || '';
-  document.getElementById('f_nameVN').value = c.name_vn || '';
-  document.getElementById('f_ctype').value = c.customer_type_id || '';
-  document.getElementById('f_etype').value = c.enterprise_type_id || '';
-  document.getElementById('f_ind').value = c.industry_id || '';
-  document.getElementById('f_nat').value = c.nationality_id || '';
-  document.getElementById('f_phone').value = c.phone || '';
-  document.getElementById('f_email').value = c.email || '';
-  document.getElementById('f_status').value = c.status || '';
-  document.getElementById('customerModal').classList.add('open');
-}
+      function openEditModal(c) {
+        editingCustomerId = c.customer_id;
+        document.getElementById("modalTitle").textContent = "Edit Customer";
+        document.getElementById("f_cid").value = c.customer_id || "";
+        document.getElementById("f_cid").disabled = true;
+        document.getElementById("f_short").value = c.short_name || "";
+        document.getElementById("f_key").value = c.cust_key_code || "";
+        document.getElementById("f_tax").value = c.tax_code || "";
+        document.getElementById("f_nameEN").value = c.name_en || "";
+        document.getElementById("f_nameVN").value = c.name_vn || "";
+        document.getElementById("f_ctype").value = c.customer_type_id || "";
+        document.getElementById("f_etype").value = c.enterprise_type_id || "";
+        document.getElementById("f_ind").value = c.industry_id || "";
+        document.getElementById("f_nat").value = c.nationality_id || "";
+        document.getElementById("f_phone").value = c.phone || "";
+        document.getElementById("f_email").value = c.email || "";
+        document.getElementById("f_status").value = c.status || "";
+        document.getElementById("customerModal").classList.add("open");
+      }
 
-async function saveCustomer() {
-  const body = {
-    customer_id:        document.getElementById('f_cid').value.trim(),
-    short_name:         document.getElementById('f_short').value.trim() || null,
-    cust_key_code:      document.getElementById('f_key').value.trim() || null,
-    tax_code:           document.getElementById('f_tax').value.trim() || null,
-    name_en:            document.getElementById('f_nameEN').value.trim() || null,
-    name_vn:            document.getElementById('f_nameVN').value.trim() || null,
-    customer_type_id:   +document.getElementById('f_ctype').value || null,
-    enterprise_type_id: +document.getElementById('f_etype').value || null,
-    industry_id:        +document.getElementById('f_ind').value || null,
-    nationality_id:     +document.getElementById('f_nat').value || null,
-    phone:              document.getElementById('f_phone').value.trim() || null,
-    email:              document.getElementById('f_email').value.trim() || null,
-    status:             document.getElementById('f_status').value.trim() || null,
-  };
-  if (!body.customer_id) { toast('Customer ID is required', true); return; }
-  try {
-    if (editingCustomerId) {
-      await api(`/api/customers/${editingCustomerId}`, { method: 'PUT', body: JSON.stringify(body) });
-      toast('Customer updated');
-    } else {
-      await api('/api/customers/', { method: 'POST', body: JSON.stringify(body) });
-      toast('Customer added');
-    }
-    closeModal('customerModal');
-    document.getElementById('f_cid').disabled = false;
-    searchCustomers();
-  } catch (e) { toast(e.message, true); }
-}
+      async function saveCustomer() {
+        const body = {
+          customer_id: document.getElementById("f_cid").value.trim(),
+          short_name: document.getElementById("f_short").value.trim() || null,
+          cust_key_code: document.getElementById("f_key").value.trim() || null,
+          tax_code: document.getElementById("f_tax").value.trim() || null,
+          name_en: document.getElementById("f_nameEN").value.trim() || null,
+          name_vn: document.getElementById("f_nameVN").value.trim() || null,
+          customer_type_id: +document.getElementById("f_ctype").value || null,
+          enterprise_type_id: +document.getElementById("f_etype").value || null,
+          industry_id: +document.getElementById("f_ind").value || null,
+          nationality_id: +document.getElementById("f_nat").value || null,
+          phone: document.getElementById("f_phone").value.trim() || null,
+          email: document.getElementById("f_email").value.trim() || null,
+          status: document.getElementById("f_status").value.trim() || null,
+        };
+        if (!body.customer_id) {
+          toast("Customer ID is required", true);
+          return;
+        }
+        try {
+          if (editingCustomerId) {
+            await api(`/api/customers/${editingCustomerId}`, {
+              method: "PUT",
+              body: JSON.stringify(body),
+            });
+            toast("Customer updated");
+          } else {
+            await api("/api/customers/", {
+              method: "POST",
+              body: JSON.stringify(body),
+            });
+            toast("Customer added");
+          }
+          closeModal("customerModal");
+          document.getElementById("f_cid").disabled = false;
+          searchCustomers();
+        } catch (e) {
+          toast(e.message, true);
+        }
+      }
 
-async function deleteCustomer(cid) {
-  if (!confirm(`Delete ${cid}? This cannot be undone.`)) return;
-  try {
-    await api(`/api/customers/${cid}`, { method: 'DELETE' });
-    toast('Customer deleted');
-    searchCustomers();
-  } catch (e) { toast(e.message, true); }
-}
+      async function deleteCustomer(cid) {
+        if (!confirm(`Delete ${cid}? This cannot be undone.`)) return;
+        try {
+          await api(`/api/customers/${cid}`, { method: "DELETE" });
+          toast("Customer deleted");
+          searchCustomers();
+        } catch (e) {
+          toast(e.message, true);
+        }
+      }
 
-// ── History & Revert ───────────────────────────────────────
-async function viewHistory(cid) {
-  document.getElementById('historyTitle').textContent = `History — ${cid}`;
-  document.getElementById('historyBody').innerHTML = '<p style="color:var(--muted)">Loading…</p>';
-  document.getElementById('historyModal').classList.add('open');
-  try {
-    const rows = await api(`/api/customers/${cid}/history`);
-    if (!rows.length) { document.getElementById('historyBody').innerHTML = '<p style="color:var(--muted)">No history yet.</p>'; return; }
-    document.getElementById('historyBody').innerHTML = rows.map(h => {
-      const changes = h.action === 'UPDATE' && h.old_data && h.new_data
-        ? Object.keys(h.new_data).filter(k => h.old_data[k] !== h.new_data[k])
-            .map(k => `<span>${k}:</span> ${h.old_data[k] || '—'} → ${h.new_data[k] || '—'}`).join(' · ')
-        : '';
-      return `
+      // ── History & Revert ───────────────────────────────────────
+      async function viewHistory(cid) {
+        document.getElementById("historyTitle").textContent =
+          `History — ${cid}`;
+        document.getElementById("historyBody").innerHTML =
+          '<p style="color:var(--muted)">Loading…</p>';
+        document.getElementById("historyModal").classList.add("open");
+        try {
+          const rows = await api(`/api/customers/${cid}/history`);
+          if (!rows.length) {
+            document.getElementById("historyBody").innerHTML =
+              '<p style="color:var(--muted)">No history yet.</p>';
+            return;
+          }
+          document.getElementById("historyBody").innerHTML = rows
+            .map((h) => {
+              const changes =
+                h.action === "UPDATE" && h.old_data && h.new_data
+                  ? Object.keys(h.new_data)
+                      .filter((k) => h.old_data[k] !== h.new_data[k])
+                      .map(
+                        (k) =>
+                          `<span>${k}:</span> ${h.old_data[k] || "—"} → ${h.new_data[k] || "—"}`,
+                      )
+                      .join(" · ")
+                  : "";
+              return `
         <div class="history-item">
           <div class="history-meta">
             <span class="history-action action-${h.action}">${h.action}</span>
-            <span class="history-who">by ${h.full_name || h.username || 'unknown'}</span>
+            <span class="history-who">by ${h.full_name || h.username || "unknown"}</span>
             <span class="history-when">${new Date(h.changed_at).toLocaleString()}</span>
-            ${currentRole === 'admin' && h.action === 'UPDATE' ? `<button class="btn-secondary btn-sm" onclick="revertTo('${cid}',${h.id})">↩ Revert</button>` : ''}
+            ${currentRole === "admin" && h.action === "UPDATE" ? `<button class="btn-secondary btn-sm" onclick="revertTo('${cid}',${h.id})">↩ Revert</button>` : ""}
           </div>
-          ${changes ? `<div class="history-diff">${changes}</div>` : ''}
+          ${changes ? `<div class="history-diff">${changes}</div>` : ""}
         </div>`;
-    }).join('');
-  } catch (e) { toast(e.message, true); }
-}
+            })
+            .join("");
+        } catch (e) {
+          toast(e.message, true);
+        }
+      }
 
-async function revertTo(cid, historyId) {
-  if (!confirm('Revert this record to this version?')) return;
-  try {
-    await api(`/api/customers/${cid}/revert/${historyId}`, { method: 'POST' });
-    toast('Record reverted');
-    closeModal('historyModal');
-    searchCustomers();
-  } catch (e) { toast(e.message, true); }
-}
+      async function revertTo(cid, historyId) {
+        if (!confirm("Revert this record to this version?")) return;
+        try {
+          await api(`/api/customers/${cid}/revert/${historyId}`, {
+            method: "POST",
+          });
+          toast("Record reverted");
+          closeModal("historyModal");
+          searchCustomers();
+        } catch (e) {
+          toast(e.message, true);
+        }
+      }
 
-// ── Import ─────────────────────────────────────────────────
-function handleDrop(e) {
-  e.preventDefault();
-  document.getElementById('dropZone').classList.remove('drag');
-  const file = e.dataTransfer.files[0];
-  if (file) handleFile(file);
-}
+      // ── Import ─────────────────────────────────────────────────
+      function handleDrop(e) {
+        e.preventDefault();
+        document.getElementById("dropZone").classList.remove("drag");
+        const file = e.dataTransfer.files[0];
+        if (file) handleFile(file);
+      }
 
-async function handleFile(file) {
-  if (!file) return;
-  const formData = new FormData();
-  formData.append('file', file);
-  document.getElementById('importResult').style.display = 'none';
-  try {
-    const res = await fetch(`${API}/api/import/excel`, {
-      method: 'POST',
-      headers: { 'Authorization': `Bearer ${token}` },
-      body: formData
-    });
-    const data = await res.json();
-    document.getElementById('importResult').style.display = 'block';
-    document.getElementById('importResult').innerHTML = `
+      async function handleFile(file) {
+        if (!file) return;
+        const formData = new FormData();
+        formData.append("file", file);
+        document.getElementById("importResult").style.display = "none";
+        try {
+          const res = await fetch(`${API}/api/import/excel`, {
+            method: "POST",
+            headers: { Authorization: `Bearer ${token}` },
+            body: formData,
+          });
+          const data = await res.json();
+          document.getElementById("importResult").style.display = "block";
+          document.getElementById("importResult").innerHTML = `
       <div class="stat-row">
         <div class="stat"><div class="stat-num">${data.total_rows}</div><div class="stat-label">Total rows</div></div>
         <div class="stat"><div class="stat-num ok">${data.success}</div><div class="stat-label">Success</div></div>
         <div class="stat"><div class="stat-num err">${data.errors}</div><div class="stat-label">Errors</div></div>
       </div>
-      ${data.error_details?.length ? `<details><summary style="cursor:pointer;font-size:0.78rem;color:var(--muted)">View errors</summary>
-        <pre style="font-size:0.72rem;margin-top:8px;overflow:auto">${JSON.stringify(data.error_details, null, 2)}</pre></details>` : ''}
+      ${
+        data.error_details?.length
+          ? `<details><summary style="cursor:pointer;font-size:0.78rem;color:var(--muted)">View errors</summary>
+        <pre style="font-size:0.72rem;margin-top:8px;overflow:auto">${JSON.stringify(data.error_details, null, 2)}</pre></details>`
+          : ""
+      }
     `;
-    toast(`Import complete: ${data.success} rows imported`);
-    await loadImportLogs();
-  } catch (e) { toast(e.message, true); }
-}
+          toast(`Import complete: ${data.success} rows imported`);
+          await loadImportLogs();
+        } catch (e) {
+          toast(e.message, true);
+        }
+      }
 
-async function loadImportLogs() {
-  try {
-    const rows = await api('/api/import/logs');
-    document.getElementById('importLogs').innerHTML = rows.length === 0
-      ? `<tr><td colspan="6" class="empty-state">No imports yet</td></tr>`
-      : rows.map(r => `
+      async function loadImportLogs() {
+        try {
+          const rows = await api("/api/import/logs");
+          document.getElementById("importLogs").innerHTML =
+            rows.length === 0
+              ? `<tr><td colspan="6" class="empty-state">No imports yet</td></tr>`
+              : rows
+                  .map(
+                    (r) => `
         <tr>
           <td>${r.filename}</td>
-          <td>${r.username || '—'}</td>
+          <td>${r.username || "—"}</td>
           <td>${r.row_count}</td>
           <td style="color:var(--accent)">${r.success_count}</td>
-          <td style="color:${r.error_count > 0 ? 'var(--danger)' : 'var(--muted)'}">${r.error_count}</td>
+          <td style="color:${r.error_count > 0 ? "var(--danger)" : "var(--muted)"}">${r.error_count}</td>
           <td style="color:var(--muted)">${new Date(r.created_at).toLocaleString()}</td>
-        </tr>`).join('');
-  } catch {}
-}
+        </tr>`,
+                  )
+                  .join("");
+        } catch {}
+      }
 
-// ── Users ──────────────────────────────────────────────────
-async function loadUsers() {
-  try {
-    const rows = await api('/api/auth/users');
-    document.getElementById('usersBody').innerHTML = rows.map(u => `
+      // ── Users ──────────────────────────────────────────────────
+      async function loadUsers() {
+        try {
+          const rows = await api("/api/auth/users");
+          document.getElementById("usersBody").innerHTML = rows
+            .map(
+              (u) => `
       <tr>
         <td><code style="font-size:0.82rem">${u.username}</code></td>
-        <td>${u.full_name || '—'}</td>
+        <td>${u.full_name || "—"}</td>
         <td><span class="role-badge role-${u.role}">${u.role}</span></td>
-        <td style="color:${u.is_active ? 'var(--accent)' : 'var(--muted)'}">${u.is_active ? 'Active' : 'Disabled'}</td>
+        <td style="color:${u.is_active ? "var(--accent)" : "var(--muted)"}">${u.is_active ? "Active" : "Disabled"}</td>
         <td><div class="td-actions">
-          <button class="btn-secondary btn-sm" onclick="toggleUser(${u.id}, ${u.is_active})">${u.is_active ? 'Disable' : 'Enable'}</button>
+          <button class="btn-secondary btn-sm" onclick="toggleUser(${u.id}, ${u.is_active})">${u.is_active ? "Disable" : "Enable"}</button>
           <select style="font-size:0.75rem;padding:4px 8px;border:1px solid var(--border);border-radius:4px" onchange="changeRole(${u.id}, this.value)">
             <option value="">Change role…</option>
             <option value="viewer">Viewer</option>
@@ -618,56 +1231,79 @@ async function loadUsers() {
             <option value="admin">Admin</option>
           </select>
         </div></td>
-      </tr>`).join('');
-  } catch {}
-}
+      </tr>`,
+            )
+            .join("");
+        } catch {}
+      }
 
-function openUserModal() { document.getElementById('userModal').classList.add('open'); }
+      function openUserModal() {
+        document.getElementById("userModal").classList.add("open");
+      }
 
-async function saveUser() {
-  const body = {
-    username: document.getElementById('u_username').value.trim(),
-    password: document.getElementById('u_password').value,
-    full_name: document.getElementById('u_fullname').value.trim() || null,
-    role: document.getElementById('u_role').value,
-  };
-  if (!body.username || !body.password) { toast('Username and password required', true); return; }
-  try {
-    await api('/api/auth/users', { method: 'POST', body: JSON.stringify(body) });
-    toast('User created');
-    closeModal('userModal');
-    loadUsers();
-  } catch (e) { toast(e.message, true); }
-}
+      async function saveUser() {
+        const body = {
+          username: document.getElementById("u_username").value.trim(),
+          password: document.getElementById("u_password").value,
+          full_name: document.getElementById("u_fullname").value.trim() || null,
+          role: document.getElementById("u_role").value,
+        };
+        if (!body.username || !body.password) {
+          toast("Username and password required", true);
+          return;
+        }
+        try {
+          await api("/api/auth/users", {
+            method: "POST",
+            body: JSON.stringify(body),
+          });
+          toast("User created");
+          closeModal("userModal");
+          loadUsers();
+        } catch (e) {
+          toast(e.message, true);
+        }
+      }
 
-async function toggleUser(id, isActive) {
-  await api(`/api/auth/users/${id}`, { method: 'PATCH', body: JSON.stringify({ is_active: !isActive }) });
-  toast('Updated'); loadUsers();
-}
+      async function toggleUser(id, isActive) {
+        await api(`/api/auth/users/${id}`, {
+          method: "PATCH",
+          body: JSON.stringify({ is_active: !isActive }),
+        });
+        toast("Updated");
+        loadUsers();
+      }
 
-async function changeRole(id, role) {
-  if (!role) return;
-  await api(`/api/auth/users/${id}`, { method: 'PATCH', body: JSON.stringify({ role }) });
-  toast('Role updated'); loadUsers();
-}
+      async function changeRole(id, role) {
+        if (!role) return;
+        await api(`/api/auth/users/${id}`, {
+          method: "PATCH",
+          body: JSON.stringify({ role }),
+        });
+        toast("Role updated");
+        loadUsers();
+      }
 
-// ── Utils ──────────────────────────────────────────────────
-function closeModal(id) {
-  document.getElementById(id).classList.remove('open');
-  if (id === 'customerModal') document.getElementById('f_cid').disabled = false;
-}
+      // ── Utils ──────────────────────────────────────────────────
+      function closeModal(id) {
+        document.getElementById(id).classList.remove("open");
+        if (id === "customerModal")
+          document.getElementById("f_cid").disabled = false;
+      }
 
-document.querySelectorAll('.modal-overlay').forEach(m => {
-  m.addEventListener('click', e => { if (e.target === m) closeModal(m.id); });
-});
+      document.querySelectorAll(".modal-overlay").forEach((m) => {
+        m.addEventListener("click", (e) => {
+          if (e.target === m) closeModal(m.id);
+        });
+      });
 
-function toast(msg, isErr = false) {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.style.background = isErr ? '#c0392b' : '#1a1a18';
-  el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), 3000);
-}
-</script>
-</body>
+      function toast(msg, isErr = false) {
+        const el = document.getElementById("toast");
+        el.textContent = msg;
+        el.style.background = isErr ? "#c0392b" : "#1a1a18";
+        el.classList.add("show");
+        setTimeout(() => el.classList.remove("show"), 3000);
+      }
+    </script>
+  </body>
 </html>
